@@ -1,0 +1,9 @@
+pytest 
+requests 
+python-dotenv 
+psycopg2 
+jsonschema
+pytest-pyreport
+pytest-rerunfailures
+pytest-pyreport
+allure-pytest
