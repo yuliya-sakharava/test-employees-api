@@ -33,41 +33,29 @@ class Employees(BaseAPI):
         assert response.json() == data, f"Failed. Actual response: {response.json()}, but expected {data}"
         jsonschema.validate(response.json(), JSONHandler.load_json(PATH_ALL_EMPLOYEES))
 
+    @allure.step("Add new employee.")
+    def create_new_employee(self, employee_id):
+        data = {"employeeId": int(employee_id), "name": "Mike", "organization": "Engineering",
+                "role": "Lead Engineer"}
+        response = self.session.post(self.url, headers=self.headers, json=data)
+        assert response.status_code == 200, f"Status code should be 200, but received {response.status_code}"
+        assert response.json() == data, f"Failed. Actual response: {response.json()}, "f"but expected {data}"
+
+    @allure.step("Update single field")
+    def update_single_field(self, employee_id, new_data):
+        data = {'organization': f"{new_data}"}
+        response = self.session.patch(f"{self.url}/{employee_id}", headers=self.headers, json=data)
+        assert response.status_code == 200, f"Status code should be 200, but received {response.status_code}"
+        assert response.json() == {'message': 'Employee updated'}
+
+    @allure.step("Update full employee data")
+    def update_full_employee(self, employee_id, new_data):
+        response = self.session.put(f"{self.url}/{employee_id}", headers=self.headers, json=new_data)
+        assert response.status_code == 200, f"Status code should be 200, but received {response.status_code}"
+        assert response.json() == {'message': 'Employee updated'}
+
     @allure.step("Delete single employee.")
     def delete_employee(self, employee_id):
         response = self.session.delete(f"{self.url}/{employee_id}", headers=self.headers)
         assert response.status_code == 200, f"Status code should be 200, but received {response.status_code}"
         assert response.json() == {'message': 'Employee deleted'}
-
-    def create_new_employee(self):
-        data = {
-            "name": "Mike",
-            "organization": "isSoft",
-            "role": "Lead DevOps"
-        }
-        response = self.session.post(self.url, headers=self.headers, json=data)
-        assert response.status_code == 200, f"Status code should be 200, but received {response.status_code}"
-        assert response.json() == {
-            "employeeId": 6,
-            "name": "Mike",
-            "organization": "isSoft",
-            "role": "Lead DevOps"
-        }
-
-    def update_single_field(self):
-        data = {
-            'organization': 'Epam_123'
-        }
-        response = self.session.patch(f"{self.url}/4", headers=self.headers, json=data)
-        assert response.status_code == 200, f"Status code should be 200, but received {response.status_code}"
-        assert response.json() == {'message': 'Employee updated'}
-
-    def update_full_employee(self):
-        data = {
-            "name": "Togi",
-            "organization": "Google",
-            "role": "Senior Dev"
-        }
-        response = self.session.put(f"{self.url}/2", headers=self.headers, json=data)
-        assert response.status_code == 200, f"Status code should be 200, but received {response.status_code}"
-        assert response.json() == {'message': 'Employee updated'}

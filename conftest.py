@@ -78,7 +78,7 @@ def read_dataset(create_employees):
 @pytest.fixture(scope="session", autouse=True)
 def delete_employees(db_connection, create_employees):
     yield
-    # time.sleep(15)
+    time.sleep(10)
     for user in create_employees:
         user_id = user.get("employeeId")
         db_connection.execute("DELETE FROM employees WHERE employee_id = %s", user_id)
